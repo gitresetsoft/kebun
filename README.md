@@ -1,73 +1,131 @@
-# Welcome to your Lovable project
 
-## Project info
+![Kebun Banner](https://repository-images.githubusercontent.com/1008432117/18f385bb-7602-4772-87c8-231b1f4d4ef7)
+# 🌱 Kebun - Digital Plant Collection Manager
 
-**URL**: https://lovable.dev/projects/108a041c-7747-42b7-a45d-e82c618ead81
+A modern, elegant web application where plant enthusiasts can register their gardens (kebun) and manage beautiful collections of plants. Built with cutting-edge web technologies and featuring a stunning green-accented design.
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+### 🏡 Garden Management
+- **Register Your Kebun** - Create and manage your personal garden space
+- **Public Garden Views** - Share your garden with the community via `/kebun/:id`
+- **Garden Dashboard** - Private management interface for garden owners
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/108a041c-7747-42b7-a45d-e82c618ead81) and start prompting.
+### 🌿 Plant Collections
+- **Plant Profiles** - Detailed plant information with photos, titles, scientific names, and descriptions
+- **Public Plant Pages** - Individual plant showcases accessible via `/plant/:id`
+- **Rich Plant Data** - Comprehensive plant information management
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🔐 Authentication & Security
+- **Secure Authentication** - Mock login/signup system with protected routes
+- **Protected Pages** - Private dashboard and management areas
+- **Public Access** - Gardens and plants viewable by anyone without login
+- **Sign Out** - Secure session management
 
-**Use your preferred IDE**
+### 📱 Modern User Experience
+- **Mobile Responsive** - Optimized for all device sizes
+- **Micro Animations** - Subtle, delightful interactions throughout the app
+- **Outstanding Landing Page** - Eye-catching hero section with green accent theme
+- **Elegant Design** - Modern UI with HeroUI component library
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Frontend Framework:** React.js + Vite
+- **Styling:** Tailwind CSS
+- **UI Components:** HeroUI (formerly NextUI)
+- **Build Tool:** Vite
+- **Responsive Design:** Mobile-first approach
+- **Animations:** CSS transitions and transforms
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn package manager
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/kebun.git
+   cd kebun
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. **Open your browser**
+   Navigate to `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+# or
+yarn build
 ```
 
-**Edit a file directly in GitHub**
+### Responsive Design
+- Mobile-first CSS approach
+- Flexible grid systems
+- Touch-friendly interface elements
+- Optimized images for different screen sizes
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🎭 Micro Animations
 
-**Use GitHub Codespaces**
+The app includes subtle animations for enhanced user experience:
+- **Page Transitions** - Smooth navigation between routes
+- **Button Hover Effects** - Interactive feedback
+- **Card Animations** - Gentle entrance animations
+- **Form Interactions** - Input focus and validation states
+- **Loading States** - Skeleton screens and spinners
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📱 Mobile Responsiveness
 
-## What technologies are used for this project?
+- **Breakpoints:** Mobile (320px+), Tablet (768px+), Desktop (1024px+)
+- **Navigation:** Collapsible mobile menu
+- **Touch Targets:** Minimum 44px for accessibility
+- **Content Scaling:** Fluid typography and spacing
 
-This project is built with:
+## 🤝 Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## How can I deploy this project?
+## 📄 License
 
-Simply open [Lovable](https://lovable.dev/projects/108a041c-7747-42b7-a45d-e82c618ead81) and click on Share -> Publish.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Can I connect a custom domain to my Lovable project?
+## 🙏 Acknowledgments
 
-Yes, you can!
+- **HeroUI** - Beautiful React components
+- **Tailwind CSS** - Utility-first CSS framework
+- **Vite** - Lightning-fast build tool
+- **React** - The library that powers our UI
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📞 Support
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+For questions or support, please open an issue on GitHub or contact the development team.
+
+---
+
+**Happy Gardening! 🌱✨**
+
+---
+
+Made with ❤️ by [Ambik Project](https://ambik.link/?src=github) 🇲🇾
