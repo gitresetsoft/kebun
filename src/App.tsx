@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 import AddPlantPage from "./pages/AddPlantPage";
+import EditPlantPage from "./pages/EditPlantPage";
 import PublicKebunPage from "./pages/PublicKebunPage";
 import PublicPlantPage from "./pages/PublicPlantPage";
 import NotFound from "./pages/NotFound";
@@ -46,6 +47,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <AddPlantPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/plants/:id/edit" 
+                element={
+                  <ProtectedRoute>
+                    <EditPlantPage />
                   </ProtectedRoute>
                 } 
               />

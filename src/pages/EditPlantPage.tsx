@@ -1,11 +1,22 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Camera, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import MemberSelector from '../components/MemberSelector';
 
-const AddPlantPage: React.FC = () => {
+interface Plant {
+  id: string;
+  title: string;
+  scientificName: string;
+  description: string;
+  image: string;
+  plantedBy?: string;
+  createdAt: string;
+}
+
+const EditPlantPage: React.FC = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -15,6 +26,24 @@ const AddPlantPage: React.FC = () => {
     image: '',
     plantedBy: '',
   });
+
+  useEffect(() => {
+    // Load plant data
+    const storedPlants = localStorage.getItem('kebun_plants');
+    if (storedPlants) {
+      const plants: Plant[] = JSON.parse(storedPlants);
+      const plant = plants.find(p => p.id === id);
+      if (plant) {
+        setFormData({
+          title: plant.title,
+          scientificName: plant.scientificName,
+          description: plant.description,
+          image: plant.image,
+          plantedBy: plant.plantedBy || '',
+        });
+      }
+    }
+  }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -27,25 +56,24 @@ const AddPlantPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create new plant
-    const newPlant = {
-      id: Date.now().toString(),
-      ...formData,
-      image: formData.image || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400',
-      createdAt: new Date().toISOString(),
-    };
+    // Update plant
+    const storedPlants = localStorage.getItem('kebun_plants');
+    if (storedPlants) {
+      const plants: Plant[] = JSON.parse(storedPlants);
+      const updatedPlants = plants.map(plant => 
+        plant.id === id 
+          ? { ...plant, ...formData }
+          : plant
+      );
+      localStorage.setItem('kebun_plants', JSON.stringify(updatedPlants));
 
-    // Save to localStorage
-    const existingPlants = JSON.parse(localStorage.getItem('kebun_plants') || '[]');
-    const updatedPlants = [...existingPlants, newPlant];
-    localStorage.setItem('kebun_plants', JSON.stringify(updatedPlants));
+      toast({
+        title: "Plant updated successfully!",
+        description: "Your plant information has been updated.",
+      });
 
-    toast({
-      title: "Plant added successfully!",
-      description: "Your new plant has been added to your collection.",
-    });
-
-    navigate('/dashboard');
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -60,8 +88,8 @@ const AddPlantPage: React.FC = () => {
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to Dashboard
           </button>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Add New Plant</h1>
-          <p className="text-gray-600">Share your latest botanical discovery</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Edit Plant</h1>
+          <p className="text-gray-600">Update your plant information</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 animate-scale-in">
@@ -72,19 +100,22 @@ const AddPlantPage: React.FC = () => {
                 Plant Photo
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-green-400 transition-colors duration-200">
+                {formData.image && (
+                  <img
+                    src={formData.image}
+                    alt="Plant preview"
+                    className="w-32 h-32 object-cover rounded-lg mx-auto mb-4"
+                  />
+                )}
                 <Camera className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-gray-600 mb-4">Upload a photo of your plant</p>
                 <input
                   type="url"
                   name="image"
                   value={formData.image}
                   onChange={handleInputChange}
-                  placeholder="Enter image URL (for demo purposes)"
+                  placeholder="Enter image URL"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
-                <p className="text-xs text-gray-500 mt-2">
-                  For demo: use an image URL or leave empty for default
-                </p>
               </div>
             </div>
 
@@ -147,36 +178,9 @@ const AddPlantPage: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 resize-none"
-                placeholder="Tell us about your plant - its care requirements, growth habits, or why you love it..."
+                placeholder="Tell us about your plant..."
               />
             </div>
-
-            {/* Preview */}
-            {(formData.title || formData.scientificName || formData.description) && (
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                      {formData.image ? (
-                        <img
-                          src={formData.image}
-                          alt="Preview"
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      ) : (
-                        <Camera className="h-8 w-8 text-gray-400" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">{formData.title || 'Plant Name'}</h4>
-                      <p className="text-sm text-green-600 font-medium">{formData.scientificName || 'Scientific name'}</p>
-                      <p className="text-sm text-gray-600 mt-2">{formData.description || 'Plant description'}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Submit Button */}
             <div className="flex space-x-4 pt-6">
@@ -192,7 +196,7 @@ const AddPlantPage: React.FC = () => {
                 className="flex-1 flex items-center justify-center py-3 px-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200"
               >
                 <Save className="h-5 w-5 mr-2" />
-                Add Plant
+                Update Plant
               </button>
             </div>
           </form>
@@ -202,4 +206,4 @@ const AddPlantPage: React.FC = () => {
   );
 };
 
-export default AddPlantPage;
+export default EditPlantPage;

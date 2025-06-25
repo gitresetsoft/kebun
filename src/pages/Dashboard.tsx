@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus, Leaf, Calendar, Edit3, Eye, Users } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { Plus, Leaf, Camera, Edit, Eye, Trash2 } from 'lucide-react';
+import KebunProfile from '../components/KebunProfile';
+import MembersList from '../components/MembersList';
 
 interface Plant {
   id: string;
@@ -10,190 +12,181 @@ interface Plant {
   scientificName: string;
   description: string;
   image: string;
+  plantedBy?: string;
   createdAt: string;
 }
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [plants, setPlants] = useState<Plant[]>([]);
+  const [activeTab, setActiveTab] = useState<'plants' | 'members' | 'profile'>('plants');
 
   useEffect(() => {
-    // Load plants from localStorage (mock data)
+    // Load plants from localStorage
     const storedPlants = localStorage.getItem('kebun_plants');
     if (storedPlants) {
       setPlants(JSON.parse(storedPlants));
-    } else {
-      // Set some sample plants
-      const samplePlants: Plant[] = [
-        {
-          id: '1',
-          title: 'Monstera Deliciosa',
-          scientificName: 'Monstera deliciosa',
-          description: 'A beautiful tropical plant with large, fenestrated leaves. Perfect for indoor decoration.',
-          image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          title: 'Peace Lily',
-          scientificName: 'Spathiphyllum wallisii',
-          description: 'Elegant flowering houseplant known for its white blooms and air-purifying qualities.',
-          image: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400',
-          createdAt: new Date().toISOString(),
-        },
-      ];
-      setPlants(samplePlants);
-      localStorage.setItem('kebun_plants', JSON.stringify(samplePlants));
     }
   }, []);
 
-  const deletePlant = (plantId: string) => {
-    const updatedPlants = plants.filter(plant => plant.id !== plantId);
-    setPlants(updatedPlants);
-    localStorage.setItem('kebun_plants', JSON.stringify(updatedPlants));
+  const getMemberName = (memberId: string) => {
+    const members = JSON.parse(localStorage.getItem('kebun_members') || '[]');
+    const member = members.find((m: any) => m.id === memberId);
+    return member ? member.name : 'Unknown Member';
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-12 animate-fade-in">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Welcome back, {user?.name}!
-              </h1>
-              <p className="text-gray-600 text-lg">
-                Manage your garden collections and plant discoveries
-              </p>
-            </div>
-            <Link
-              to="/dashboard/plants/new"
-              className="mt-4 md:mt-0 inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200 hover-lift"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Add New Plant
-            </Link>
-          </div>
+        {/* Welcome Header */}
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Welcome back, {user?.name}!
+          </h1>
+          <p className="text-gray-600">Manage your garden and watch it flourish</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-slide-up">
-          <div className="bg-white rounded-2xl p-6 shadow-lg hover-lift">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-xl">
-                <Leaf className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Plants</p>
-                <p className="text-3xl font-bold text-gray-900">{plants.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-lg hover-lift">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <Camera className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Photos Taken</p>
-                <p className="text-3xl font-bold text-gray-900">{plants.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-lg hover-lift">
-            <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <Eye className="h-8 w-8 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Profile Views</p>
-                <p className="text-3xl font-bold text-gray-900">-</p>
-              </div>
-            </div>
-          </div>
+        {/* Tab Navigation */}
+        <div className="flex space-x-1 bg-white rounded-xl p-1 mb-8 shadow-lg">
+          <button
+            onClick={() => setActiveTab('plants')}
+            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+              activeTab === 'plants'
+                ? 'bg-green-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Leaf className="h-5 w-5 mr-2" />
+            Plants
+          </button>
+          <button
+            onClick={() => setActiveTab('members')}
+            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+              activeTab === 'members'
+                ? 'bg-green-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Users className="h-5 w-5 mr-2" />
+            Members
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+              activeTab === 'profile'
+                ? 'bg-green-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Edit3 className="h-5 w-5 mr-2" />
+            Garden Profile
+          </button>
         </div>
 
-        {/* Plants Grid */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Your Plant Collection</h2>
-            <Link 
-              to={`/kebun/${user?.id}`} 
-              className="text-green-600 hover:text-green-700 font-medium flex items-center"
-            >
-              <Eye className="h-4 w-4 mr-1" />
-              View Public Page
-            </Link>
+        {/* Tab Content */}
+        {activeTab === 'profile' && (
+          <div className="animate-fade-in">
+            <KebunProfile isOwner={true} />
           </div>
+        )}
 
-          {plants.length === 0 ? (
-            <div className="text-center py-16 animate-fade-in">
-              <div className="mx-auto h-24 w-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <Leaf className="h-12 w-12 text-green-600" />
+        {activeTab === 'members' && (
+          <div className="animate-fade-in">
+            <MembersList isOwner={true} />
+          </div>
+        )}
+
+        {activeTab === 'plants' && (
+          <div className="animate-fade-in">
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Plant Collection</h2>
+                <p className="text-gray-600">You have {plants.length} plants in your garden</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">No plants yet</h3>
-              <p className="text-gray-600 mb-8">Start building your collection by adding your first plant</p>
-              <Link
-                to="/dashboard/plants/new"
-                className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Your First Plant
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-scale-in">
-              {plants.map((plant, index) => (
-                <div 
-                  key={plant.id} 
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+              
+              <div className="flex space-x-3 mt-4 sm:mt-0">
+                <Link
+                  to="/kebun/1"
+                  className="flex items-center px-4 py-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
                 >
-                  <div className="relative h-48 bg-gray-200">
-                    <img
-                      src={plant.image}
-                      alt={plant.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{plant.title}</h3>
-                    <p className="text-sm text-green-600 font-medium mb-3">{plant.scientificName}</p>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{plant.description}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex space-x-2">
-                        <Link
-                          to={`/plant/${plant.id}`}
-                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
-                          title="View plant"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                        <button
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                          title="Edit plant"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => deletePlant(plant.id)}
-                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                          title="Delete plant"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Public Page
+                </Link>
+                <Link
+                  to="/dashboard/plants/new"
+                  className="flex items-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Add Plant
+                </Link>
+              </div>
+            </div>
+
+            {/* Plants Grid */}
+            {plants.length === 0 ? (
+              <div className="text-center py-16 animate-scale-in">
+                <div className="mx-auto h-24 w-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                  <Leaf className="h-12 w-12 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">No plants yet</h3>
+                <p className="text-gray-600 mb-8">Start building your digital garden by adding your first plant!</p>
+                <Link
+                  to="/dashboard/plants/new"
+                  className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Add Your First Plant
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-scale-in">
+                {plants.map((plant, index) => (
+                  <div
+                    key={plant.id}
+                    className="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className="relative h-48 bg-gray-200 overflow-hidden">
+                      <img
+                        src={plant.image}
+                        alt={plant.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                      
+                      {/* Edit Button */}
+                      <Link
+                        to={`/dashboard/plants/${plant.id}/edit`}
+                        className="absolute top-2 right-2 p-2 bg-white/90 text-gray-700 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-white"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                      </Link>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-200">
+                        {plant.title}
+                      </h3>
+                      <p className="text-sm text-green-600 font-medium mb-3">{plant.scientificName}</p>
+                      <p className="text-gray-600 text-sm line-clamp-2 mb-3">{plant.description}</p>
+                      
+                      {plant.plantedBy && (
+                        <p className="text-xs text-gray-500 mb-2">
+                          Planted by {getMemberName(plant.plantedBy)}
+                        </p>
+                      )}
+                      
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        Added {new Date(plant.createdAt).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

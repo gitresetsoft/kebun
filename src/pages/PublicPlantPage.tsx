@@ -9,6 +9,7 @@ interface Plant {
   scientificName: string;
   description: string;
   image: string;
+  plantedBy?: string;
   createdAt: string;
 }
 
@@ -16,6 +17,7 @@ const PublicPlantPage: React.FC = () => {
   const { id } = useParams();
   const [plant, setPlant] = useState<Plant | null>(null);
   const [isLiked, setIsLiked] = useState(false);
+  const [planterInfo, setPlanterInfo] = useState<{ name: string; avatar: string } | null>(null);
 
   useEffect(() => {
     // Load plant from localStorage (mock data)
@@ -24,6 +26,15 @@ const PublicPlantPage: React.FC = () => {
       const plants: Plant[] = JSON.parse(storedPlants);
       const foundPlant = plants.find(p => p.id === id);
       setPlant(foundPlant || null);
+      
+      // Get planter info
+      if (foundPlant?.plantedBy) {
+        const members = JSON.parse(localStorage.getItem('kebun_members') || '[]');
+        const member = members.find((m: any) => m.id === foundPlant.plantedBy);
+        if (member) {
+          setPlanterInfo({ name: member.name, avatar: member.avatar });
+        }
+      }
     }
   }, [id]);
 
@@ -120,10 +131,16 @@ const PublicPlantPage: React.FC = () => {
                     day: 'numeric'
                   })}
                 </div>
-                <div className="flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  by Garden Enthusiast
-                </div>
+                {planterInfo && (
+                  <div className="flex items-center">
+                    <img
+                      src={planterInfo.avatar}
+                      alt={planterInfo.name}
+                      className="w-5 h-5 rounded-full mr-2"
+                    />
+                    Planted by {planterInfo.name}
+                  </div>
+                )}
                 <div className="flex items-center">
                   <Camera className="h-4 w-4 mr-2" />
                   1 photo
