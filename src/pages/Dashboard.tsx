@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
           <p className="text-gray-600">Manage your garden and watch it flourish</p>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tabs Navigation */}
         <div className="flex space-x-1 bg-white rounded-xl p-1 mb-8 shadow-lg">
           <button
             onClick={() => setActiveTab('plants')}
