@@ -153,7 +153,7 @@ const PublicPlantPage: React.FC = () => {
                   </div>
                 )}
                 <div className="flex items-center bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg p-2">
-                  <a href={`${import.meta.env.VITE_BASE_URL}/kebun/${plant?.kebun_id}`} className="h-4 w-auto mb-1">
+                  <a href={`/kebun/${plant?.kebun_id}`} className="h-4 w-auto mb-1">
                   {kebunData ? kebunData.name : 'Tiada data kebun'}
                   </a>
                 </div>
@@ -215,7 +215,7 @@ const PublicPlantPage: React.FC = () => {
           <div className="text-center py-8 bg-white rounded-xl">
             <p className="text-gray-600">Terokai lebih banyak tumbuhan dari koleksi ini</p>
             <Link
-              to={`/kebun/1`}
+              to={`/kebun/${plant?.kebun_id}`}
               className="inline-flex items-center mt-4 text-green-600 hover:text-green-700 font-medium"
             >
               Lihat Koleksi Taman
