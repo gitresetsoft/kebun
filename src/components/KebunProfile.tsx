@@ -1,37 +1,22 @@
-
 import React, { useState, useEffect } from 'react';
 import { Camera, Edit3, Save, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-
-interface KebunProfileData {
-  name: string;
-  description: string;
-  coverImage: string;
-  location: string;
-}
-
+import { Kebun } from '@/data/kebun';
 interface KebunProfileProps {
+  kebun: Kebun;
   isOwner?: boolean;
 }
 
-const KebunProfile: React.FC<KebunProfileProps> = ({ isOwner = false }) => {
-  const [profileData, setProfileData] = useState<KebunProfileData>(() => {
-    const stored = localStorage.getItem('kebun_profile');
-    return stored ? JSON.parse(stored) : {
-      name: 'My Beautiful Garden',
-      description: 'A peaceful sanctuary where nature thrives and memories are made.',
-      coverImage: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=1200',
-      location: 'Garden Paradise'
-    };
-  });
+const KebunProfile: React.FC<KebunProfileProps> = ({ kebun, isOwner = false }) => {
+  const [profileData, setProfileData] = useState<Kebun>(kebun);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(profileData);
 
   useEffect(() => {
-    localStorage.setItem('kebun_profile', JSON.stringify(profileData));
-  }, [profileData]);
+    setProfileData(kebun);
+  }, [kebun]);
 
   const handleSave = () => {
     setProfileData(editData);
@@ -48,7 +33,7 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ isOwner = false }) => {
       {/* Cover Image */}
       <div className="relative h-64 md:h-80 bg-gradient-to-r from-green-400 to-emerald-500">
         <img
-          src={profileData.coverImage}
+          src={profileData.image}
           alt="Garden cover"
           className="w-full h-full object-cover"
         />
@@ -82,9 +67,9 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ isOwner = false }) => {
             </h1>
           )}
           
-          {!isEditing && (
+          {/* {!isEditing && (
             <p className="text-white/90 text-lg">{profileData.location}</p>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -97,13 +82,13 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ isOwner = false }) => {
                 Cover Image URL
               </label>
               <Input
-                value={editData.coverImage}
-                onChange={(e) => setEditData({ ...editData, coverImage: e.target.value })}
+                value={editData.image}
+                onChange={(e) => setEditData({ ...editData, image: e.target.value })}
                 placeholder="Enter cover image URL"
               />
             </div>
             
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Location
               </label>
@@ -112,7 +97,7 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ isOwner = false }) => {
                 onChange={(e) => setEditData({ ...editData, location: e.target.value })}
                 placeholder="Garden location"
               />
-            </div>
+            </div> */}
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -139,7 +124,7 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ isOwner = false }) => {
           </div>
         ) : (
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">About This Garden</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">Sejarah & Info</h2>
             <p className="text-gray-700 leading-relaxed">{profileData.description}</p>
           </div>
         )}

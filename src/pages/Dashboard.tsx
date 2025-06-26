@@ -1,37 +1,43 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Leaf, Calendar, Edit3, Eye, Users } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import KebunProfile from '../components/KebunProfile';
 import MembersList from '../components/MembersList';
-
-interface Plant {
-  id: string;
-  title: string;
-  scientificName: string;
-  description: string;
-  image: string;
-  plantedBy?: string;
-  createdAt: string;
-}
+import { readKebun } from '@/data/supabaseUtil';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const [plants, setPlants] = useState<Plant[]>([]);
+  const [kebunData, setKebunData] = useState();
+  const [plants, setPlants] = useState([]);
+  const [members, setMembers] = useState([]);
   const [activeTab, setActiveTab] = useState<'plants' | 'members' | 'profile'>('plants');
 
   useEffect(() => {
-    // Load plants from localStorage
-    const storedPlants = localStorage.getItem('kebun_plants');
-    if (storedPlants) {
-      setPlants(JSON.parse(storedPlants));
-    }
+    const loadKebun = async () => {
+      try {
+        const kebunId = '315b5436-9eeb-4385-8cb8-2cd37615b57f';
+        const { kebun, plants, members } = await readKebun(kebunId);
+        console.log('Dashboard',{kebun, plants, members})
+        if (kebun) {
+          setKebunData(kebunData);
+          setMembers(members);
+          setPlants(plants);
+        } else {
+          console.error(`Kebun with id ${kebunId} not found`);
+          setPlants([]);
+        }
+      } catch (error) {
+        console.error('Error loading kebun:', error);
+        setPlants([]);
+      }
+    };
+
+    loadKebun();
   }, []);
 
   const getMemberName = (memberId: string) => {
-    const members = JSON.parse(localStorage.getItem('kebun_members') || '[]');
-    const member = members.find((m: any) => m.id === memberId);
+    const member = members.find((m) => m.id === memberId);
     return member ? member.name : 'Unknown Member';
   };
 
@@ -86,13 +92,13 @@ const Dashboard: React.FC = () => {
         {/* Tab Content */}
         {activeTab === 'profile' && (
           <div className="animate-fade-in">
-            <KebunProfile isOwner={true} />
+            <KebunProfile isOwner={true} kebun={kebunData} />
           </div>
         )}
 
         {activeTab === 'members' && (
           <div className="animate-fade-in">
-            <MembersList isOwner={true} />
+            <MembersList isOwner={true} members={members} />
           </div>
         )}
 
@@ -107,7 +113,7 @@ const Dashboard: React.FC = () => {
               
               <div className="flex space-x-3 mt-4 sm:mt-0">
                 <Link
-                  to="/kebun/1"
+                  to="/kebun/kebun-1"
                   className="flex items-center px-4 py-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
                 >
                   <Eye className="h-4 w-4 mr-2" />

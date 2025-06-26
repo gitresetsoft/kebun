@@ -28,7 +28,7 @@ const Navigation: React.FC = () => {
             <div className="p-2 bg-green-100 rounded-xl group-hover:bg-green-200 transition-colors duration-200">
               <Leaf className="h-6 w-6 text-green-600" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Kebun Bloom</span>
+            <span className="text-xl font-bold text-gray-900">Kebun Komuniti</span>
           </Link>
 
           {/* Desktop Navigation */}

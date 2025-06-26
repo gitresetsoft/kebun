@@ -1,41 +1,52 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Heart, Share2, Camera, MapPin } from 'lucide-react';
-
-interface Plant {
-  id: string;
-  title: string;
-  scientificName: string;
-  description: string;
-  image: string;
-  plantedBy?: string;
-  createdAt: string;
-}
+import { readPlant } from '@/data/supabaseUtil';
+import { Plant } from '@/data/plants';
+import { Kebun } from '@/data/kebun';
 
 const PublicPlantPage: React.FC = () => {
   const { id } = useParams();
   const [plant, setPlant] = useState<Plant | null>(null);
+  const [kebunData, setKebunData] = useState<Kebun | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [planterInfo, setPlanterInfo] = useState<{ name: string; avatar: string } | null>(null);
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
-    // Load plant from localStorage (mock data)
-    const storedPlants = localStorage.getItem('kebun_plants');
-    if (storedPlants) {
-      const plants: Plant[] = JSON.parse(storedPlants);
-      const foundPlant = plants.find(p => p.id === id);
-      setPlant(foundPlant || null);
-      
-      // Get planter info
-      if (foundPlant?.plantedBy) {
-        const members = JSON.parse(localStorage.getItem('kebun_members') || '[]');
-        const member = members.find((m: any) => m.id === foundPlant.plantedBy);
-        if (member) {
-          setPlanterInfo({ name: member.name, avatar: member.avatar });
+    const loadPlant = async () => {
+      setIsLoading(true);
+      try {
+        const plantId = id;
+        if (!plantId) {
+          console.error('Tiada plantId ditemui');
+          setPlant(null);
+          setIsLoading(false);
+          return;
         }
+        const { plant, member, kebun } = await readPlant(plantId);
+        console.log('Public Plant',{plant, member, kebun})
+        if (plant) {
+          setPlant(plant);
+          setKebunData(kebun);
+          if (plant.planted_by) {
+            if (member) {
+              setPlanterInfo({ name: member.name, avatar: member.avatar });
+            }
+          }
+        } else {
+          console.error(`Tumbuhan dengan id ${plantId} tidak ditemui`);
+          setPlant(null);
+        }
+      } catch (error) {
+        console.error('Ralat memuatkan tumbuhan:', error);
+        setPlant(null);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
+
+    loadPlant();
   }, [id]);
 
   const handleLike = () => {
@@ -51,7 +62,7 @@ const PublicPlantPage: React.FC = () => {
           url: window.location.href,
         });
       } catch (error) {
-        console.log('Error sharing:', error);
+        console.log('Ralat berkongsi:', error);
       }
     } else {
       // Fallback to copying URL
@@ -59,12 +70,12 @@ const PublicPlantPage: React.FC = () => {
     }
   };
 
-  if (!plant) {
+  if (!plant || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading plant...</p>
+          <p className="text-gray-600">Memuatkan tumbuhan...</p>
         </div>
       </div>
     );
@@ -80,7 +91,7 @@ const PublicPlantPage: React.FC = () => {
             className="flex items-center text-gray-600 hover:text-green-600 transition-colors duration-200"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
-            Back to Home
+            Kembali ke Laman Utama
           </Link>
         </div>
 
@@ -123,52 +134,53 @@ const PublicPlantPage: React.FC = () => {
               
               {/* Meta Information */}
               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
-                <div className="flex items-center">
+                <div className="flex items-center bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-2">
                   <Calendar className="h-4 w-4 mr-2" />
-                  Added {new Date(plant.createdAt).toLocaleDateString('en-US', {
+                  Ditambah pada {new Date(plant.created_at).toLocaleDateString('ms-MY', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}
                 </div>
                 {planterInfo && (
-                  <div className="flex items-center">
-                    <img
+                  <div className="flex items-center bg-gradient-to-r from-blue-500/20 to-green-500/20 rounded-lg p-2">
+                    Ditanam oleh : <img
                       src={planterInfo.avatar}
                       alt={planterInfo.name}
-                      className="w-5 h-5 rounded-full mr-2"
+                      className="w-5 h-5 rounded-full mx-2"
                     />
-                    Planted by {planterInfo.name}
+                    {planterInfo.name}
                   </div>
                 )}
-                <div className="flex items-center">
-                  <Camera className="h-4 w-4 mr-2" />
-                  1 photo
+                <div className="flex items-center bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg p-2">
+                  <a href={`${import.meta.env.VITE_BASE_URL}/kebun/${plant?.kebun_id}`} className="h-4 w-auto mb-1">
+                  {kebunData ? kebunData.name : 'Tiada data kebun'}
+                  </a>
                 </div>
               </div>
             </div>
 
             {/* Description */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">About this plant</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Tentang tumbuhan ini</h2>
               <p className="text-gray-700 leading-relaxed text-lg">{plant.description}</p>
             </div>
 
             {/* Plant Care Info (Mock) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-green-50 rounded-xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Care Level</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">Tahap Penjagaan</h3>
                 <div className="flex items-center">
                   <div className="w-full bg-green-200 rounded-full h-2 mr-3">
                     <div className="bg-green-600 h-2 rounded-full w-3/4"></div>
                   </div>
-                  <span className="text-sm text-gray-600">Moderate</span>
+                  {/* <span className="text-sm text-gray-600">Moderat</span> */}
                 </div>
               </div>
               
               <div className="bg-blue-50 rounded-xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Light Requirements</h3>
-                <p className="text-gray-600">Bright, indirect light</p>
+                <h3 className="font-semibold text-gray-900 mb-3">Keperluan Cahaya</h3>
+                <p className="text-gray-600">Cahaya terang, tidak langsung</p>
               </div>
             </div>
 
@@ -183,7 +195,7 @@ const PublicPlantPage: React.FC = () => {
                 }`}
               >
                 <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-                {isLiked ? 'Liked' : 'Like this plant'}
+                {isLiked ? 'Disukai' : 'Sukai tumbuhan ini'}
               </button>
               
               <Link
@@ -191,7 +203,7 @@ const PublicPlantPage: React.FC = () => {
                 className="flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200"
               >
                 <MapPin className="h-5 w-5 mr-2" />
-                Start Your Own Garden
+                Mulakan Taman Anda Sendiri
               </Link>
             </div>
           </div>
@@ -199,14 +211,14 @@ const PublicPlantPage: React.FC = () => {
 
         {/* Related Plants (Mock) */}
         <div className="mt-12 animate-fade-in">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">More from this garden</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Lebih dari taman ini</h2>
           <div className="text-center py-8 bg-white rounded-xl">
-            <p className="text-gray-600">Explore more plants from this collection</p>
+            <p className="text-gray-600">Terokai lebih banyak tumbuhan dari koleksi ini</p>
             <Link
               to={`/kebun/1`}
               className="inline-flex items-center mt-4 text-green-600 hover:text-green-700 font-medium"
             >
-              View Garden Collection
+              Lihat Koleksi Taman
               <ArrowLeft className="h-4 w-4 ml-1 rotate-180" />
             </Link>
           </div>

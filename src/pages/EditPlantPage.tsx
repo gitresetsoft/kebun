@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Camera, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import MemberSelector from '../components/MemberSelector';
+// import { plants } from '../data/plants';
+import { members } from '../data/members';
 
 interface Plant {
   id: string;
@@ -28,20 +29,16 @@ const EditPlantPage: React.FC = () => {
   });
 
   useEffect(() => {
-    // Load plant data
-    const storedPlants = localStorage.getItem('kebun_plants');
-    if (storedPlants) {
-      const plants: Plant[] = JSON.parse(storedPlants);
-      const plant = plants.find(p => p.id === id);
-      if (plant) {
-        setFormData({
-          title: plant.title,
-          scientificName: plant.scientificName,
-          description: plant.description,
-          image: plant.image,
-          plantedBy: plant.plantedBy || '',
-        });
-      }
+    // Load plant data from mock data
+    const plant = plants.find(p => p.id === id);
+    if (plant) {
+      setFormData({
+        title: plant.title,
+        scientificName: plant.scientificName,
+        description: plant.description,
+        image: plant.image,
+        plantedBy: plant.plantedBy || '',
+      });
     }
   }, [id]);
 
@@ -55,23 +52,17 @@ const EditPlantPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Update plant
-    const storedPlants = localStorage.getItem('kebun_plants');
-    if (storedPlants) {
-      const plants: Plant[] = JSON.parse(storedPlants);
-      const updatedPlants = plants.map(plant => 
-        plant.id === id 
-          ? { ...plant, ...formData }
-          : plant
-      );
-      localStorage.setItem('kebun_plants', JSON.stringify(updatedPlants));
-
+    // Update plant in mock data (in-memory only, not persistent)
+    const plantIndex = plants.findIndex(p => p.id === id);
+    if (plantIndex !== -1) {
+      plants[plantIndex] = {
+        ...plants[plantIndex],
+        ...formData,
+      };
       toast({
         title: "Plant updated successfully!",
         description: "Your plant information has been updated.",
       });
-
       navigate('/dashboard');
     }
   };

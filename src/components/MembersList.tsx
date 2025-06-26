@@ -3,55 +3,46 @@ import React, { useState } from 'react';
 import { User, Plus, Edit3, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-
-interface Member {
-  id: string;
-  name: string;
-  avatar: string;
-  role: string;
-}
+import { createRecord, deleteRecord } from '@/data/supabaseUtil';
+import { Member } from '@/data/members';
 
 interface MembersListProps {
   isOwner?: boolean;
+  members: Member[];
 }
 
-const MembersList: React.FC<MembersListProps> = ({ isOwner = false }) => {
-  const [members, setMembers] = useState<Member[]>(() => {
-    const stored = localStorage.getItem('kebun_members');
-    return stored ? JSON.parse(stored) : [
-      {
-        id: '1',
-        name: 'Garden Enthusiast',
-        avatar: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400',
-        role: 'Owner'
-      }
-    ];
-  });
-
+const MembersList: React.FC<MembersListProps> = ({ isOwner = false, members }) => {
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [newMemberName, setNewMemberName] = useState('');
 
-  const addMember = () => {
+  let currentMembers = members;
+
+  const addMember = async () => {
     if (!newMemberName.trim()) return;
     
-    const newMember: Member = {
-      id: Date.now().toString(),
+    const newMemberData = {
       name: newMemberName.trim(),
       avatar: `https://images.unsplash.com/photo-151877066${Math.floor(Math.random() * 10)}39-4636190af475?w=400`,
       role: 'Member'
     };
 
-    const updatedMembers = [...members, newMember];
-    setMembers(updatedMembers);
-    localStorage.setItem('kebun_members', JSON.stringify(updatedMembers));
-    setNewMemberName('');
-    setIsAddingMember(false);
+    try {
+      const createdMember = await createRecord('mykebun_member', newMemberData) as Member;
+      currentMembers.push(createdMember);
+      setNewMemberName('');
+      setIsAddingMember(false);
+    } catch (error) {
+      console.error('Error adding member:', error);
+    }
   };
 
-  const removeMember = (id: string) => {
-    const updatedMembers = members.filter(member => member.id !== id);
-    setMembers(updatedMembers);
-    localStorage.setItem('kebun_members', JSON.stringify(updatedMembers));
+  const removeMember = async (id: string) => {
+    try {
+      await deleteRecord('mykebun_member', id);
+      currentMembers = currentMembers.filter(member => member.id !== id);
+    } catch (error) {
+      console.error('Error removing member:', error);
+    }
   };
 
   return (
@@ -70,7 +61,7 @@ const MembersList: React.FC<MembersListProps> = ({ isOwner = false }) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {members.map((member) => (
+        {currentMembers.map((member) => (
           <div key={member.id} className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200">
             <div className="flex items-center space-x-3">
               <img

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Camera, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import MemberSelector from '../components/MemberSelector';
+import { BASE_URL, generateQRBase64 } from '../lib/generateQR';
 
 const AddPlantPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,15 +25,20 @@ const AddPlantPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    const id = Date.now().toString();
+    const qrUrl = `${BASE_URL}/plant/${id}`;
+    const qr_img = await generateQRBase64(qrUrl);
+
     // Create new plant
     const newPlant = {
       id: Date.now().toString(),
       ...formData,
       image: formData.image || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400',
       createdAt: new Date().toISOString(),
+      qr_img,
     };
 
     // Save to localStorage
