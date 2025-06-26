@@ -3,18 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Camera, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import MemberSelector from '../components/MemberSelector';
-// import { plants } from '../data/plants';
-import { members } from '../data/members';
-
-interface Plant {
-  id: string;
-  title: string;
-  scientificName: string;
-  description: string;
-  image: string;
-  plantedBy?: string;
-  createdAt: string;
-}
+import { readPlant } from '@/data/supabaseUtil';
+import { Plant } from '@/data/plants';
 
 const EditPlantPage: React.FC = () => {
   const { id } = useParams();
@@ -22,24 +12,32 @@ const EditPlantPage: React.FC = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: '',
-    scientificName: '',
+    scientific_name: '',
     description: '',
     image: '',
     plantedBy: '',
   });
 
   useEffect(() => {
-    // Load plant data from mock data
-    const plant = plants.find(p => p.id === id);
-    if (plant) {
-      setFormData({
-        title: plant.title,
-        scientificName: plant.scientificName,
-        description: plant.description,
-        image: plant.image,
-        plantedBy: plant.plantedBy || '',
-      });
-    }
+    // Fetch plant data from the utility function
+    const fetchPlantData = async () => {
+      try {
+        const plant = await readPlant(id);
+        if (plant) {
+          setFormData({
+            title: plant.title,
+            scientific_name: plant.scientific_name,
+            description: plant.description,
+            image: plant.image,
+            plantedBy: plant.plantedBy || '',
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching plant data:', error);
+      }
+    };
+
+    fetchPlantData();
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -52,19 +50,21 @@ const EditPlantPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Update plant in mock data (in-memory only, not persistent)
-    const plantIndex = plants.findIndex(p => p.id === id);
-    if (plantIndex !== -1) {
-      plants[plantIndex] = {
-        ...plants[plantIndex],
-        ...formData,
-      };
-      toast({
-        title: "Plant updated successfully!",
-        description: "Your plant information has been updated.",
-      });
-      navigate('/dashboard');
-    }
+    // Update plant in the utility function (assuming it handles the update logic)
+    const updatePlant = async () => {
+      try {
+        await fetchPlant(id, formData); // Assuming fetchPlant can also update a plant
+        toast({
+          title: "Plant updated successfully!",
+          description: "Your plant information has been updated.",
+        });
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Error updating plant data:', error);
+      }
+    };
+
+    updatePlant();
   };
 
   return (

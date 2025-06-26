@@ -97,7 +97,7 @@ const PublicKebunPage: React.FC = () => {
         {activeTab === 'plants' && (
           <div className="animate-fade-in">
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
+            {/* <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Koleksi Tumbuhan</h2>
                 <p className="text-gray-600">Temui tumbuhan yang indah dalam taman ini</p>
@@ -113,7 +113,7 @@ const PublicKebunPage: React.FC = () => {
                   Kongsi
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Plants Grid */}
             {isLoading ? (
@@ -174,32 +174,28 @@ const PublicKebunPage: React.FC = () => {
         {plantsList.length > 0 && activeTab === 'plants' && (
           <div className="mt-16 bg-white rounded-2xl shadow-lg p-8 animate-fade-in">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">Statistik Kebun</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
+            
+            <div className="grid grid-cols-3 gap-4 sm:gap-6">
+              <div className="aspect-square bg-gray-50 rounded-xl shadow-inner flex flex-col justify-center items-center text-center">
                 <div className="text-3xl font-bold text-green-600 mb-2">{plantsList.length}</div>
-                <div className="text-gray-600">Jenis Tumbuhan</div>
+                <div className="text-gray-600 text-sm">Jenis Tumbuhan</div>
               </div>
-              <div className="text-center">
+              
+              <div className="aspect-square bg-gray-50 rounded-xl shadow-inner flex flex-col justify-center items-center text-center">
                 <div className="text-3xl font-bold text-blue-600 mb-2">
                   {new Set(plantsList.map(p => p.scientific_name.split(' ')[0])).size}
                 </div>
-                <div className="text-gray-600">Famili Tumbuhan</div>
+                <div className="text-gray-600 text-sm">Famili Tumbuhan</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">
-                  {membersList.length}
-                </div>
-                <div className="text-gray-600">Ahli Kebun</div>
+              
+              <div className="aspect-square bg-gray-50 rounded-xl shadow-inner flex flex-col justify-center items-center text-center">
+                <div className="text-3xl font-bold text-purple-600 mb-2">{membersList.length}</div>
+                <div className="text-gray-600 text-sm">Ahli Kebun</div>
               </div>
-              {/* <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-2">
-                  {Math.floor(Math.random() * 50) + 10}
-                </div>
-                <div className="text-gray-600">Suka Komuniti</div>
-              </div> */}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

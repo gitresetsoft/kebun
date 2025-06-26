@@ -1,4 +1,3 @@
-import { kebun } from "./kebun";
 import supabase from "./supabaseClient";
 
 export const createRecord = async <T>(tableName: string, data: T) => {
@@ -52,6 +51,7 @@ export const readPlant = async (id: string) => {
       .from('mykebun_plant')
       .select('*')
       .eq('id', id)
+      .eq('show',true)
       .single();
 
     if (plantsResponse.error) {

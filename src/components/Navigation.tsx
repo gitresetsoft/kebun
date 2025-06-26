@@ -20,7 +20,7 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white/90 backdrop-blur-md border-b border-green-100 sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-[#1f4f0a/90] to-green-400/80 backdrop-blur-md border-b border-green-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -32,7 +32,7 @@ const Navigation: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* <div className="hidden md:flex items-center space-x-6">
             <Link 
               to="/" 
               className="text-gray-700 hover:text-green-600 transition-colors duration-200 flex items-center space-x-1"
@@ -81,21 +81,21 @@ const Navigation: React.FC = () => {
                 </Link>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
               className="p-2 rounded-lg text-gray-600 hover:text-green-600 hover:bg-green-50 transition-colors duration-200"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
+        {/* {isMobileMenuOpen && (
           <div className="md:hidden animate-fade-in">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-green-100">
               <Link 
@@ -149,7 +149,7 @@ const Navigation: React.FC = () => {
               )}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </nav>
   );
