@@ -14,6 +14,19 @@ export const createRecord = async <T>(tableName: string, data: T) => {
   }
 };
 
+export const findAllRecords = async (tableName: string) => {
+  try {
+    const { data: records, error } = await supabase
+      .from(tableName)
+      .select('*');
+    if (error) throw error;
+    return records;
+  } catch (error) {
+    console.error('Error finding records:', error);
+    throw error;
+  }
+};
+
 export const readKebun = async (id: string) => {
   try {
     const kebunResponse = await supabase

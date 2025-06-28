@@ -61,7 +61,7 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ kebun, isOwner = false }) =
           )}
 
           {/* Garden Title Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6">
             {isEditing ? (
               <Input
                 value={editData.name}
@@ -117,8 +117,8 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ kebun, isOwner = false }) =
             </div>
           ) : (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">Sejarah & Info</h2>
-              <p className="text-gray-700 leading-relaxed">{profileData.description}</p>
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">Sejarah & Info</h2>
+              <p className="text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: profileData.description }}></p>
             </div>
           )}
         </div>

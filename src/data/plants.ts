@@ -9,4 +9,5 @@ export interface Plant {
   created_at: string;
   qrcode?: string;
   show?: boolean;
+  difficulty?: number;
 }

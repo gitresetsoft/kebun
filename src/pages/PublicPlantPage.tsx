@@ -184,25 +184,23 @@ const PublicPlantPage: React.FC = () => {
               />
             </div>
 
-            {/* Plant Care Info (Mock) */}
+            {/* Plant Care Info */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
-              <div className='bg-green-50 rounded-xl p-6'>
-                <h3 className='font-semibold text-gray-900 mb-3'>
-                  Tahap Penjagaan
-                </h3>
-                <div className='flex items-center'>
-                  <div className='w-full bg-green-200 rounded-full h-2 mr-3'>
-                    <div className='bg-green-600 h-2 rounded-full w-3/4'></div>
-                  </div>
-                  {/* <span className="text-sm text-gray-600">Moderat</span> */}
+              <div className={`rounded-xl p-6 ${plant.difficulty <= 4 ? 'bg-green-50' : plant.difficulty <= 7 ? 'bg-orange-50' : 'bg-red-50'}`}>
+                <div className='flex justify-between items-center'>
+                  <h3 className='font-semibold text-gray-900'>
+                    Tahap Penjagaan
+                  </h3>
+                  <span className='text-sm text-gray-600'>
+                    {plant.difficulty <= 4 ? 'Mudah' : plant.difficulty <= 7 ? 'Sederhana' : 'Susah'}: {plant.difficulty}/10
+                  </span>
                 </div>
-              </div>
-
-              <div className='bg-blue-50 rounded-xl p-6'>
-                <h3 className='font-semibold text-gray-900 mb-3'>
-                  Keperluan Cahaya
-                </h3>
-                <p className='text-gray-600'>Cahaya terang, tidak langsung</p>
+                <div className='flex items-center'>
+                  <span className='text-sm text-gray-600'>🌱</span>
+                  {[...Array(plant.difficulty)].map((_, index) => (
+                    index > 0 ? <span key={index} className='text-sm text-gray-600 ml-2'>🌱</span> : ''
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -237,8 +235,8 @@ const PublicPlantPage: React.FC = () => {
         
         {/* Back Navigation */}
         <div className='p-5 mt-12 md:mb-2 animate-fade-in rounded-lg bg-gradient-to-l from-green-400/30 to-green-300/30 shadow-xl'>
-          <button
-            onClick={() => history.back()}
+          <a
+            href={`/kebun/${plant?.kebun_id}`}
             className='flex items-start text-gray-600 hover:text-green-600 transition-colors duration-200'
           >
             <ArrowLeft className='h-8 w-8 mr-3 mt-1 shrink-0' />
@@ -246,7 +244,7 @@ const PublicPlantPage: React.FC = () => {
               <span>Kembali ke:</span>
               <span className='font-bold italic text-green-500'>{kebunData.name}</span>
             </div>
-          </button>
+          </a>
         </div>
         {/* To Kebun */}
         {/* <div className='mt-12 animate-fade-in'>
@@ -283,10 +281,10 @@ const PublicPlantPage: React.FC = () => {
           <img 
             src={planterInfo?.avatar} 
             alt={planterInfo?.name} 
-            className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" 
+            className="w-45 h-auto rounded-full mx-auto mb-4 object-cover" 
           />
           <h3 className="text-xl font-semibold text-gray-900">{planterInfo?.name}</h3>
-          <p className="text-gray-600">Planter</p>
+          {/* <p className="text-gray-600"></p> */}
         </div>
       </Modal>
     </div>

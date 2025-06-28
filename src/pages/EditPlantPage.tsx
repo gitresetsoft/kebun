@@ -3,8 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Camera, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import MemberSelector from '../components/MemberSelector';
-import { readPlant } from '@/data/supabaseUtil';
+import { readPlant, updateRecord } from '@/data/supabaseUtil';
 import { Plant } from '@/data/plants';
+import { Kebun } from '@/data/kebun';
+import { Member } from '@/data/members';
+
+interface data { plant: Plant; member: Member; kebun: Kebun; }
 
 const EditPlantPage: React.FC = () => {
   const { id } = useParams();
@@ -22,14 +26,14 @@ const EditPlantPage: React.FC = () => {
     // Fetch plant data from the utility function
     const fetchPlantData = async () => {
       try {
-        const plant = await readPlant(id);
-        if (plant) {
+        const plantData = await readPlant(id);
+        if (plantData) {
           setFormData({
-            title: plant.title,
-            scientific_name: plant.scientific_name,
-            description: plant.description,
-            image: plant.image,
-            plantedBy: plant.plantedBy || '',
+            title: plantData.plant.title,
+            scientific_name: plantData.plant.scientific_name,
+            description: plantData.plant.description,
+            image: plantData.plant.image,
+            plantedBy: plantData.plant.planted_by || '',
           });
         }
       } catch (error) {
@@ -50,10 +54,9 @@ const EditPlantPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Update plant in the utility function (assuming it handles the update logic)
     const updatePlant = async () => {
       try {
-        await fetchPlant(id, formData); // Assuming fetchPlant can also update a plant
+        await updateRecord('mykebun_plant', id, formData);
         toast({
           title: "Plant updated successfully!",
           description: "Your plant information has been updated.",
@@ -137,7 +140,7 @@ const EditPlantPage: React.FC = () => {
                 id="scientificName"
                 name="scientificName"
                 required
-                value={formData.scientificName}
+                value={formData.scientific_name}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                 placeholder="e.g., Ficus lyrata"

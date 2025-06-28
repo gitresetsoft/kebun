@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Leaf, MapPin, Calendar, Eye, Heart, Share2, User } from 'lucide-react';
+import { Leaf, MapPin, Calendar, Eye, Heart, Share2, User, Trophy } from 'lucide-react';
 import KebunProfile from '../components/KebunProfile';
 import MembersList from '../components/MembersList';
+// import AchievementsList from '../components/AchievementsList'; // Assuming AchievementsList component exists
 import { readKebun } from '@/data/supabaseUtil';
+import Info from '@/components/Info';
 
 const PublicKebunPage: React.FC = () => {
   const { id } = useParams();
   const [kebunData, setKebunData] = useState();
   const [plantsList, setPlantsList] = useState([]);
   const [membersList, setMembersList] = useState([]);
-  const [activeTab, setActiveTab] = useState<'plants' | 'members'>('plants');
+  const [activeTab, setActiveTab] = useState<'plants' | 'members' | 'achievements'>('plants');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,12 +26,13 @@ const PublicKebunPage: React.FC = () => {
           setIsLoading(false);
           return;
         }
-        const { kebun, plants, members } = await readKebun(kebunId);
+        const { kebun, plants, members } = await readKebun(kebunId); // Assuming achievements are part of the kebun data
         console.log('Public Kebun',{kebun, plants, members})
         if (kebun) {
           setKebunData(kebun);
           setMembersList(members);
           setPlantsList(plants);
+          // setAchievementsList(achievements); // Set achievements list
         } else {
           console.error(`Kebun dengan id ${kebunId} tidak ditemui`);
           setPlantsList([]);
@@ -47,7 +50,7 @@ const PublicKebunPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:py-12 py-2">
         {/* Kebun Profile Section */}
         <div className="animate-fade-in mb-8">
           {isLoading ? (
@@ -68,7 +71,7 @@ const PublicKebunPage: React.FC = () => {
             }`}
           >
             <Leaf className="h-5 w-5 mr-2" />
-            Tumbuhan ({plantsList.length})
+            Tanaman
           </button>
           <button
             onClick={() => setActiveTab('members')}
@@ -80,6 +83,17 @@ const PublicKebunPage: React.FC = () => {
           >
             <User className="h-5 w-5 mr-2" />
             Ahli
+          </button>
+          <button
+            onClick={() => setActiveTab('achievements')}
+            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+              activeTab === 'achievements'
+                ? 'bg-green-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Trophy className="h-5 w-5 mr-2" />
+            Info
           </button>
         </div>
 
@@ -124,42 +138,36 @@ const PublicKebunPage: React.FC = () => {
                   <div className="mx-auto h-24 w-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
                     <Leaf className="h-12 w-12 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Tiada tumbuhan lagi</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Tiada tanaman lagi</h3>
                   <p className="text-gray-600">Taman ini baru sahaja bermula!</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {plantsList.map((plant, index) => (
                     <Link
                       key={plant.id}
                       to={`/plant/${plant.id}`}
-                      className="group bg-white rounded-2xl shadow-lg overflow-hidden hover-lift"
+                      className="group flex items-center bg-white rounded-xl shadow-sm overflow-hidden hover:bg-gray-50 transition-all"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <div className="relative h-48 bg-gray-200 overflow-hidden">
+                      {/* Left-side Image */}
+                      <div className="w-20 h-20 flex-shrink-0 bg-gray-200 overflow-hidden">
                         <img
                           src={plant.image}
                           alt={plant.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-xl"
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-200">
+                    
+                      {/* Right-side Content */}
+                      <div className="p-4 flex-1">
+                        <h3 className="text-base font-semibold text-gray-800 group-hover:text-green-600">
                           {plant.title}
                         </h3>
-                        <p className="text-sm text-green-600 font-medium mb-3">{plant.scientific_name}</p>
-                        <p className="text-gray-600 text-sm line-clamp-2 mb-3">{plant.description}</p>
-                        
-                        {plant.plantedBy && (membersList.length > 0) && (
-                          <p className="text-xs text-green-600 mb-2 font-medium">
-                            Oleh {membersList.find(member => member.id === plant.plantedBy)?.name || '(Pengguna tidak ditemui)'}
-                          </p>
-                        )}
-                        
-                        <div className="flex items-center text-xs text-gray-500">
+                        <p className="text-sm text-green-600 font-medium">{plant.scientific_name}</p>
+                        <div className="text-xs text-gray-500 mt-1 flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
-                          Ditambah {new Date(plant.created_at).toLocaleDateString()}
+                          {new Date(plant.created_at).toLocaleDateString()}
                         </div>
                       </div>
                     </Link>
@@ -170,32 +178,19 @@ const PublicKebunPage: React.FC = () => {
           </div>
         )}
 
-        {/* Garden Stats */}
-        {plantsList.length > 0 && activeTab === 'plants' && (
-          <div className="mt-16 bg-white rounded-2xl shadow-lg p-8 animate-fade-in">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Statistik Kebun</h3>
-            
-            <div className="grid grid-cols-3 gap-4 sm:gap-6">
-              <div className="aspect-square bg-gray-50 rounded-xl shadow-inner flex flex-col justify-center items-center text-center">
-                <div className="text-3xl font-bold text-green-600 mb-2">{plantsList.length}</div>
-                <div className="text-gray-600 text-sm">Jenis Tumbuhan</div>
-              </div>
-              
-              <div className="aspect-square bg-gray-50 rounded-xl shadow-inner flex flex-col justify-center items-center text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-2">
-                  {new Set(plantsList.map(p => p.scientific_name.split(' ')[0])).size}
-                </div>
-                <div className="text-gray-600 text-sm">Famili Tumbuhan</div>
-              </div>
-              
-              <div className="aspect-square bg-gray-50 rounded-xl shadow-inner flex flex-col justify-center items-center text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">{membersList.length}</div>
-                <div className="text-gray-600 text-sm">Ahli Kebun</div>
-              </div>
-            </div>
+        {activeTab === 'achievements' && (
+          <div className="animate-fade-in">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : (
+              kebunData ? (
+                <Info data={kebunData} />
+              ) : (
+                <div>Info tidak ditemui</div>
+              )
+            )}
           </div>
         )}
-
       </div>
     </div>
   );

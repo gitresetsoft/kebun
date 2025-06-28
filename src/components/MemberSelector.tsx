@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { members } from '../data/members';
+import { findAllRecords } from '../data/supabaseUtil';
 
 interface Member {
   id: string;
@@ -22,7 +22,11 @@ const MemberSelector: React.FC<MemberSelectorProps> = ({
   const [membersList, setMembersList] = useState<Member[]>([]);
 
   useEffect(() => {
-    setMembersList(members);
+    const fetchMembers = async () => {
+      const members = await findAllRecords('mykebun_member');
+      setMembersList(members);
+    };
+    fetchMembers();
   }, []);
 
   return (
