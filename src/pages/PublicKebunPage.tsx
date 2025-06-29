@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Leaf, MapPin, Calendar, Eye, Heart, Share2, User, Trophy } from 'lucide-react';
 import KebunProfile from '../components/KebunProfile';
 import MembersList from '../components/MembersList';
-// import AchievementsList from '../components/AchievementsList'; // Assuming AchievementsList component exists
+import Gallery from '../components/Gallery';
 import { readKebun } from '@/data/supabaseUtil';
 import Info from '@/components/Info';
 
@@ -12,7 +12,8 @@ const PublicKebunPage: React.FC = () => {
   const [kebunData, setKebunData] = useState();
   const [plantsList, setPlantsList] = useState([]);
   const [membersList, setMembersList] = useState([]);
-  const [activeTab, setActiveTab] = useState<'plants' | 'members' | 'achievements'>('plants');
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [activeTab, setActiveTab] = useState<'plants' | 'members' | 'achievements' | 'gallery'>('plants'); // Added 'gallery' to the tab options
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -26,13 +27,12 @@ const PublicKebunPage: React.FC = () => {
           setIsLoading(false);
           return;
         }
-        const { kebun, plants, members } = await readKebun(kebunId); // Assuming achievements are part of the kebun data
+        const { kebun, plants, members } = await readKebun(kebunId); // Assuming gallery images are part of the kebun data
         console.log('Public Kebun',{kebun, plants, members})
         if (kebun) {
           setKebunData(kebun);
           setMembersList(members);
           setPlantsList(plants);
-          // setAchievementsList(achievements); // Set achievements list
         } else {
           console.error(`Kebun dengan id ${kebunId} tidak ditemui`);
           setPlantsList([]);
@@ -61,39 +61,50 @@ const PublicKebunPage: React.FC = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-1 bg-white rounded-xl p-1 mb-8 shadow-lg animate-slide-up">
+        <div className="flex space-x-1 bg-white rounded-xl p-1 mb-4 shadow-lg animate-slide-up">
           <button
             onClick={() => setActiveTab('plants')}
-            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center py-3 px-1 rounded-lg transition-all duration-200 ${
               activeTab === 'plants'
                 ? 'bg-green-600 text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            <Leaf className="h-5 w-5 mr-2" />
+            <Leaf className="h-5 w-5 mr-1" />
             Tanaman
           </button>
           <button
             onClick={() => setActiveTab('members')}
-            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center py-3 px-1 rounded-lg transition-all duration-200 ${
               activeTab === 'members'
                 ? 'bg-green-600 text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            <User className="h-5 w-5 mr-2" />
+            <User className="h-5 w-5 mr-1" />
             Ahli
           </button>
           <button
             onClick={() => setActiveTab('achievements')}
-            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center py-3 px-1 rounded-lg transition-all duration-200 ${
               activeTab === 'achievements'
                 ? 'bg-green-600 text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            <Trophy className="h-5 w-5 mr-2" />
+            <Trophy className="h-5 w-5 mr-1" />
             Info
+          </button>
+          <button
+            onClick={() => setActiveTab('gallery')}
+            className={`flex-1 flex items-center justify-center py-3 px-1 rounded-lg transition-all duration-200 ${
+              activeTab === 'gallery'
+                ? 'bg-green-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Eye className="h-5 w-5 mr-1" />
+            Galeri
           </button>
         </div>
 
@@ -188,6 +199,18 @@ const PublicKebunPage: React.FC = () => {
               ) : (
                 <div>Info tidak ditemui</div>
               )
+            )}
+          </div>
+        )}
+
+        {activeTab === 'gallery' && (
+          <div className="animate-fade-in">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : kebunData ? (
+              <Gallery data={kebunData} />
+            ) : (
+              <div>Gallery data not found</div>
             )}
           </div>
         )}

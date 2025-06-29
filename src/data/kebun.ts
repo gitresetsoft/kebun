@@ -7,6 +7,7 @@ export interface Kebun {
   plants: string[];
   qrcode?: string;
   info?: Infos;
+  gallery?: Galleries;
 }
 
 export interface Infos {
@@ -16,6 +17,24 @@ export interface Infos {
     description?: string;
   }[];
   sponsors: {
+    title: string;
+    images?: string[];
+    description?: string;
+  }[];
+}
+
+export interface Galleries {
+  landscape: {
+    title: string;
+    images?: string[];
+    description?: string;
+  }[];
+  activity: {
+    title: string;
+    images?: string[];
+    description?: string;
+  }[];
+  etc: {
     title: string;
     images?: string[];
     description?: string;

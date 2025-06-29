@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Edit3, Save, X } from 'lucide-react';
+import { Camera, Edit3, Facebook, Save, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Kebun } from '@/data/kebun';
@@ -45,7 +45,7 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ kebun, isOwner = false }) =
             className="w-full h-full object-cover cursor-pointer"
             onClick={handleImageClick}
           />
-          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent"></div>
           
           {isOwner && (
             <div className="absolute top-4 right-4">
@@ -59,26 +59,10 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ kebun, isOwner = false }) =
               </Button>
             </div>
           )}
-
-          {/* Garden Title Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6">
-            {isEditing ? (
-              <Input
-                value={editData.name}
-                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                className="text-2xl md:text-4xl font-bold text-white bg-transparent border-white/50 placeholder:text-white/70"
-                placeholder="Garden name"
-              />
-            ) : (
-              <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">
-                {profileData.name}
-              </h1>
-            )}
-          </div>
         </div>
 
         {/* Profile Content */}
-        <div className="p-6">
+        <div className="p-3">
           {isEditing ? (
             <div className="space-y-4">
               <div>
@@ -117,10 +101,18 @@ const KebunProfile: React.FC<KebunProfileProps> = ({ kebun, isOwner = false }) =
             </div>
           ) : (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">Sejarah & Info</h2>
               <p className="text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: profileData.description }}></p>
             </div>
           )}
+        </div>
+        
+
+        {/* Social Media Links Overlay */}
+        <div className="flex space-x-4 bg-gradient-to-r from-blue-500 to-blue-700 p-2 rounded-lg max-w-[120px] mx-auto mb-2">
+          <a href="https://www.facebook.com/groups/651810512473697" target="_blank" rel="noopener noreferrer" className="text-white flex items-center">
+            <Facebook className="h-4 w-4 mr-2" />
+            Facebook
+          </a>
         </div>
       </div>
 
