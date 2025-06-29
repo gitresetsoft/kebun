@@ -167,7 +167,7 @@ const PublicKebunPage: React.FC = () => {
                         <p className="text-sm text-green-600 font-medium">{plant.scientific_name}</p>
                         <div className="text-xs text-gray-500 mt-1 flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
-                          {new Date(plant.created_at).toLocaleDateString()}
+                          {new Date(plant.created_at).toLocaleDateString('ms-MY')}
                         </div>
                       </div>
                     </Link>

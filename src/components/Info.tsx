@@ -24,8 +24,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
 
   return (
     <div>
-      <h2>Awards</h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <span className="text-xl font-bold mb-1">Awards</span>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 mb-5">
         {filteredInfo.awards.map((award, index) => (
           <div key={award.title} className="group flex items-center bg-white rounded-xl shadow-sm overflow-hidden hover:bg-gray-50 transition-all" style={{ animationDelay: `${index * 0.1}s` }}>
             <div className="w-20 h-20 flex-shrink-0 bg-gray-200 overflow-hidden">
@@ -45,7 +45,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           </div>
         ))}
       </div>
-      <h2 className="mt-3">Sponsors</h2>
+      <span className="text-xl mt-3 font-bold mb-1">Sponsors</span>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filteredInfo.sponsors.map((sponsor, index) => (
           <div key={sponsor.title} className="group flex items-center bg-white rounded-xl shadow-sm overflow-hidden hover:bg-gray-50 transition-all" style={{ animationDelay: `${index * 0.1}s` }}>

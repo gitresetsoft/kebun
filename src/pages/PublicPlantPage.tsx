@@ -19,13 +19,13 @@ const PublicPlantPage: React.FC = () => {
   const [plant, setPlant] = useState<Plant | null>(null);
   const [kebunData, setKebunData] = useState<Kebun | null>(null);
   const [isLiked, setIsLiked] = useState(false);
-  const [planterInfo, setPlanterInfo] = useState<{
-    name: string;
-    avatar: string;
-  } | null>(null);
+  // const [planterInfo, setPlanterInfo] = useState<{
+  //   name: string;
+  //   avatar: string;
+  // } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPlantImageModalOpen, setIsPlantImageModalOpen] = useState(false);
-  const [isPlanterAvatarModalOpen, setIsPlanterAvatarModalOpen] = useState(false);
+  // const [isPlanterAvatarModalOpen, setIsPlanterAvatarModalOpen] = useState(false);
 
   useEffect(() => {
     const loadPlant = async () => {
@@ -38,16 +38,16 @@ const PublicPlantPage: React.FC = () => {
           setIsLoading(false);
           return;
         }
-        const { plant, member, kebun } = await readPlant(plantId);
-        console.log('Public Plant', { plant, member, kebun });
+        const { plant, kebun } = await readPlant(plantId);
+        console.log('Public Plant', { plant, kebun });
         if (plant) {
           setPlant(plant);
           setKebunData(kebun);
-          if (plant.planted_by) {
-            if (member) {
-              setPlanterInfo({ name: member.name, avatar: member.avatar });
-            }
-          }
+          // if (plant.planted_by) {
+          //   if (member) {
+          //     setPlanterInfo({ name: member.name, avatar: member.avatar });
+          //   }
+          // }
         } else {
           console.error(`Tumbuhan dengan id ${plantId} tidak ditemui`);
           setPlant(null);
@@ -146,7 +146,7 @@ const PublicPlantPage: React.FC = () => {
                     day: 'numeric',
                   })}
                 </div>
-                {planterInfo && (
+                {/* {planterInfo && (
                   <div 
                     className='flex items-center bg-gradient-to-r from-blue-500/80 to-green-500/80 rounded-lg p-2 cursor-pointer hover:bg-gradient-to-r hover:from-blue-600/80 hover:to-green-600/80 transition-all duration-200'
                     onClick={() => setIsPlanterAvatarModalOpen(true)}
@@ -158,7 +158,7 @@ const PublicPlantPage: React.FC = () => {
                     />
                     {planterInfo.name}
                   </div>
-                )}
+                )} */}
                 <div className='flex items-center bg-gradient-to-r from-yellow-500/80 to-orange-500/80 rounded-lg p-2'>
                   <a
                     href={`/kebun/${plant?.kebun_id}`}
@@ -276,7 +276,7 @@ const PublicPlantPage: React.FC = () => {
       </Modal>
 
       {/* Planter Avatar Modal */}
-      <Modal isOpen={isPlanterAvatarModalOpen} onClose={() => setIsPlanterAvatarModalOpen(false)}>
+      {/* <Modal isOpen={isPlanterAvatarModalOpen} onClose={() => setIsPlanterAvatarModalOpen(false)}>
         <div className="p-8 text-center">
           <img 
             src={planterInfo?.avatar} 
@@ -284,9 +284,9 @@ const PublicPlantPage: React.FC = () => {
             className="w-45 h-auto rounded-full mx-auto mb-4 object-cover" 
           />
           <h3 className="text-xl font-semibold text-gray-900">{planterInfo?.name}</h3>
-          {/* <p className="text-gray-600"></p> */}
+          <p className="text-gray-600"></p>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

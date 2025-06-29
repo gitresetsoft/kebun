@@ -72,20 +72,9 @@ export const readPlant = async (id: string) => {
     }
 
     const plantData = plantsResponse.data;
-    let memberResponse = null;
     let kebunResponse = null;
 
-    if (plantData.planted_by) {
-      memberResponse = await supabase
-        .from('mykebun_member')
-        .select('*')
-        .eq('id', plantData.planted_by)
-        .single();
-
-      if (memberResponse.error) {
-        throw new Error('Error reading member data');
-      }
-
+    if (plantData.kebun_id) {
       kebunResponse = await supabase
         .from('mykebun_kebun')
         .select('name')
@@ -99,7 +88,6 @@ export const readPlant = async (id: string) => {
 
     return {
       plant: plantData,
-      member: memberResponse ? memberResponse.data : null,
       kebun: kebunResponse ? kebunResponse.data : null
     };
   } catch (error) {
